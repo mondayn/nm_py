@@ -198,9 +198,7 @@ def remove_dup_cols(_df):
     return _df.iloc[:,list(cols.values())]
 
 def my_clipboard(df):
-    ''' for copying to excel
-        todo: consider casting pat_acct_num, patient_dw_id to str
-    '''
+    ''' for copying to excel '''
     df.rename(columns = lambda x: x.replace('_',' ').strip()).to_clipboard(index=False)
 
 def view_short(df):
@@ -216,17 +214,13 @@ def view_short(df):
     # return df  # 2022-11-11 otherwise jupyter shows twice
 
 def change_dtypes(df,cols,dtype):
-    ''' updates a column (or list of columns) to a specified data type e.g. int or float 
-    '''
+    ''' updates a column (or list of columns) to a specified data type e.g. int or float '''
     if 'list' not in str(type(cols)):
         cols = [cols]    
     return df.assign(**{c: df[c].astype(dtype) for c in cols})
 
 def profile(df):
-    ''' returns summary stats for a dataframe
-
-        also try df.info()
-    '''    
+    ''' returns summary stats for a dataframe. also try df.info() '''    
     pd.options.display.float_format = '{:.0f}'.format
 
     df2 = pd.DataFrame()
@@ -250,16 +244,6 @@ def profile(df):
         df1 = pd.DataFrame.from_dict(d,orient='index') 
         df2 = pd.concat([df2,df1],axis=1)
     return df2.T.reset_index().drop('index',axis=1)
-
-def gen_dtypes(df):
-    ''' returns a dictionary of datatypes for a dataframe
-        useful for profiling into pd.read_csv
-    '''
-    dtypes = df.dtypes
-    colnames = dtypes.index
-    types = [i.name for i in dtypes.values]
-    column_types = dict(zip(colnames, types))
-    return column_types		
 
 #chaining warn
 # with pd.option_context('mode.chained_assignment', None):
@@ -292,13 +276,12 @@ def gen_dtypes(df):
 
 for fx in [
         collapse_levels,get_dupes,take_first,search_df,filter_str,remove_dup_cols,
-        my_clipboard,view_short,change_dtypes,profile,gen_dtypes,trim_and_rename,
+        my_clipboard,view_short,change_dtypes,profile,trim_and_rename,
         add_col,print_shape,print_cols,clean_names
 ]:
     setattr(pd.DataFrame, fx.__name__, fx)
 # from pandas.core.base import PandasObject
 # PandasObject.print_shape = print_shape
-
 
 #endregion pandas
 
@@ -416,5 +399,6 @@ def print_functions():
 if __name__ == '__main__':
     # print(str_days_ago(4))
     # print_functions()
-    pd.DataFrame({'COL':[1,2,3]}).print_cols().print_shape()
+    print(pd.DataFrame({'COL':[1,2,3]}).print_cols().print_shape())
+    # 
     # pass
