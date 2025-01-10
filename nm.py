@@ -245,6 +245,20 @@ def profile(df):
         df2 = pd.concat([df2,df1],axis=1)
     return df2.T.reset_index().drop('index',axis=1)
 
+def exists(v):
+    try:
+        if len(v)>0:
+            return True
+    except:
+        return False
+
+def matches_any(s,lst):
+    return any(x.lower() in s.lower() for x in lst)
+    
+def coalesce(df,cols,target):
+    outcome = df[cols].bfill(axis="columns").ffill(axis="columns").iloc[:, 0]
+    return df.assign(**{target: outcome}).drop(columns=cols)
+
 #chaining warn
 # with pd.option_context('mode.chained_assignment', None):
 #     _df['testcoid'] = c
@@ -398,7 +412,7 @@ def print_functions():
 
 if __name__ == '__main__':
     # print(str_days_ago(4))
-    # print_functions()
-    print(pd.DataFrame({'COL':[1,2,3]}).print_cols().print_shape())
+    print_functions()
+    # print(pd.DataFrame({'COL':[1,2,3]}).print_cols().print_shape())
     # 
     # pass
