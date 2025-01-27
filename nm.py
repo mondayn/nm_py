@@ -23,6 +23,10 @@ def matches_any(s,lst):
     ''' True if s contains any characters in lst, case-insensitve '''
     return any(x.lower() in str(s).lower() for x in lst)
 
+def find_matching_element(s, string_list):
+    ''' returns first matching element, case-insensitive'''
+    return next((item for item in string_list if s.lower() in item.lower()), None)
+
 def clean_and_lower(s):
     ''' for small capping column names '''
     return s.lower().replace('\n','').replace(' ','_').replace('(','_').replace(')','_')
@@ -252,8 +256,6 @@ def exists(v):
     except:
         return False
 
-def matches_any(s,lst):
-    return any(x.lower() in s.lower() for x in lst)
     
 def coalesce(df,cols,target):
     outcome = df[cols].bfill(axis="columns").ffill(axis="columns").iloc[:, 0]
