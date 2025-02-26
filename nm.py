@@ -32,13 +32,9 @@ def clean_and_lower(s):
     return s.lower().replace('\n','').replace(' ','_').replace('(','_').replace(')','_')
 
 def flatten(items):
-    def fx(items):
-        for i in items:
-            if isinstance(i, (list,set,tuple)) :
-                yield from fx(i)
-            else:
-                yield i
-    return set(fx(items))
+    for i in items:
+        if isinstance(i,(list,set,tuple)): yield from flatten(i)
+        else: yield i
 
 from functools import reduce
 def thread_first(val, *forms):
@@ -162,7 +158,7 @@ def get_dupes(df,column_names):
     return df.loc[df.duplicated(subset=column_names, keep=False)]
 
 def take_first(df,subset,by,ascending=True):
-    return df.sort_values(by=by, ascending=ascending).drop_duplicates(subset=subset, keep="first")
+    return df.sort_values(by=by, ascending=ascending).drop_duplicates(subset=subset, keep="first").sort_values(subset)
 
 def collapse_levels(_df):
     ''' removes multi index column names after pivot_table '''
