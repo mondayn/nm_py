@@ -325,6 +325,15 @@ def file_size(file):
 def file_ts(file):
     '''file lastmodified datetime'''
     return iso(datetime.datetime.fromtimestamp(get_stat(file).st_mtime))
+
+import concurrent.futures
+from pathlib import Path
+def get_files(base_path,pattern='*.*',workers=4):
+    ''' gets files at bath_path, excludes files with ~ in name '''    
+    sub_dirs=[d for d in Path(base_path).glob('*') if d.is_dir()]
+    get_files = lambda path: [str(file) for file in Path(path).glob(pattern) if file.is_file() and '~' not in str(file.name)]
+    with concurrent.futures.ThreadPoolExecutor(workers) as executor: results = executor.map(get_files, sub_dirs)
+    return [file for sublist in results for file in sublist]
 #endregion
 
 #region excel
