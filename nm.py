@@ -36,6 +36,13 @@ def flatten(items):
         if isinstance(i,(list,set,tuple)): yield from flatten(i)
         else: yield i
 
+def chunks(lst, n): 
+    for i in range(0, len(lst), n): yield lst[i:i + n]
+
+def batch(lst,n):
+    size = int(len(lst)/n)+1
+    return chunks(lst,size)
+
 from functools import reduce
 def thread_first(val, *forms):
     ''' credit: https://toolz.readthedocs.io/en/latest/_modules/toolz/functoolz.html#thread_last
@@ -135,8 +142,7 @@ def print_cols(df):
     print(list(df.columns))
     return df
 
-def clean_names(df):
-    return df.rename(columns=clean_and_lower)
+def clean_names(df): return df.rename(columns=clean_and_lower)
 
 def trim_and_rename(_df,rename_dict) -> pd.DataFrame:
     ''' rename necessary columns, drop the others '''
@@ -154,7 +160,7 @@ def add_col(self,**kwargs):
         _df[k] = list(map(v,_df.itertuples()))
     return _df
 
-def get_dupes(df,column_names):
+def get_dupes(df,column_names): 
     return df.loc[df.duplicated(subset=column_names, keep=False)]
 
 def take_first(df,subset,by,ascending=True):
@@ -326,14 +332,18 @@ def file_ts(file):
     '''file lastmodified datetime'''
     return iso(datetime.datetime.fromtimestamp(get_stat(file).st_mtime))
 
-import concurrent.futures
-from pathlib import Path
-def get_files(base_path,pattern='*.*',workers=4):
-    ''' gets files at bath_path, excludes files with ~ in name '''    
-    sub_dirs=[d for d in Path(base_path).glob('*') if d.is_dir()]
-    get_files = lambda path: [str(file) for file in Path(path).glob(pattern) if file.is_file() and '~' not in str(file.name)]
-    with concurrent.futures.ThreadPoolExecutor(workers) as executor: results = executor.map(get_files, sub_dirs)
-    return [file for sublist in results for file in sublist]
+import os, concurrent.futures, fnmatch, glob
+def get_files(base_path,pattern='*.*',workers=6):
+    with os.scandir(base_path) as sc: files = fnmatch.filter([f.path for f in sc if f.is_file()],pattern)
+    with os.scandir(base_path) as sc: sub_dirs=[f for f in sc if f.is_dir()]    
+
+    if len(sub_dirs)>0:
+        def get_sub_files(path): return [os.path.abspath(os.path.join(path,x)) for x in glob.iglob(pattern,root_dir=path,recursive=True)]
+        with concurrent.futures.ThreadPoolExecutor(workers) as executor: results = executor.map(get_sub_files, sub_dirs)
+        files += [x for sublist in results for x in sublist]    
+
+    return [f for f in files if '~' not in f]
+
 #endregion
 
 #region excel
