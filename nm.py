@@ -16,6 +16,9 @@ pd.set_option('max_colwidth', 0)
 # from matplotlib.pylab import rcParams
 # rcParams['figure.figsize'] = 15, 4
 
+# with warnings.catch_warnings(action="ignore",category=UserWarning):
+#     fxn()
+
 #endregion
 
 #region helpers
@@ -69,14 +72,6 @@ def try_cast(s='str'):
     return i
 # thread last
 
-
-#endregion
-
-#region logging
-import logging
-from logging import handlers
-import sys
-
 from functools import wraps
 def track_duration(fn):
     import time
@@ -91,43 +86,38 @@ def track_duration(fn):
             # print(fn_name + ' | starting ')
             result = fn(*args,**kwargs)
             te = time.time()
-            print(f'{fn_name}records={result}, duration={str(datetime.timedelta(seconds=(te - ts)))}')
+            print(f'{fn_name}records={result}, {kwargs} duration={str(datetime.timedelta(seconds=(te - ts)))}')
             return result
         except Exception as e:
             return e
         # return result
     return log_duration_wrapper1
 
-# logger = logging.getLogger()
-# logger.setLevel(logging.INFO)
 
-# #log any unexpected errors
-def handle_unhandled_exception(exc_type, exc_value, exc_traceback):
-    if issubclass(exc_type, KeyboardInterrupt):
-        sys.__excepthook__(exc_type, exc_value, exc_traceback)
-        return
-    logger.critical("Unhandled exception", exc_info=(exc_type, exc_value, exc_traceback))
-sys.excepthook = handle_unhandled_exception
+#endregion
 
-def add_handler(handler,level=[]):
-    fmt = logging.Formatter('%(asctime)s [%(levelname)s] %(name)s: %(message)s')
-    handler.setFormatter(fmt)
-    if level:
-        handler.setLevel(level)
-    logger.addHandler(handler)
+#region logging
+import sys
+import logging
+from logging import handlers
 
-# add_handler(logging.StreamHandler())
-# add_handler(handlers.RotatingFileHandler(LOG_TO, mode='a+', maxBytes=10000, backupCount=0))
+LOG_TO = 'log.log' 
+print('logging to ',LOG_TO)
+logger = logging.getLogger()
 
-# EMAIL_ON_FAIL = {
-#     'mailhost':'smtp@gmail.com'
-#     ,'fromaddr':'description <name@gmail.com>'
-#     ,'toaddrs':[
-#             'name@gmail.com'
-#         ]
-#     ,'subject': 'ERROR:' + LOG_TO
-# }
-# # add_handler(handlers.SMTPHandler(**EMAIL_ON_FAIL),logging.ERROR)
+format = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+handlers = [logging.StreamHandler(),logging.handlers.RotatingFileHandler(LOG_TO, mode='a+',maxBytes=10000, backupCount=4),]
+logging.basicConfig(format=format,level=logging.INFO,handlers=handlers)
+
+# emailhandler=logging.handlers.SMTPHandler(mailhost='smtp@gmail.com',fromaddr='description <name@gmail.com>',toaddrs=['name@gmail.com'],subject='ERROR:' + LOG_TO)
+# emailhandler.setLevel(logging.ERROR)
+# emailhandler.setFormatter(logging.Formatter(format))
+# logger.addHandler(emailhandler)
+
+sys.excepthook = lambda exc_type, exc_value, exc_traceback: logger.critical("Unhandled exception", exc_info=(exc_type, exc_value, exc_traceback))
+
+def print_log(msg): print(msg); logger.info(msg)
+
 #endregion logging
 
 #region pandas
@@ -334,6 +324,7 @@ def file_ts(file):
 
 import os, concurrent.futures, fnmatch, glob
 def get_files(base_path,pattern='*.*',workers=6):
+    '''to recurse, pattern should begin with **/ '''
     with os.scandir(base_path) as sc: files = fnmatch.filter([f.path for f in sc if f.is_file()],pattern)
     with os.scandir(base_path) as sc: sub_dirs=[f for f in sc if f.is_dir()]    
 
@@ -427,9 +418,13 @@ def print_functions():
             print(s)
 #endregion
 
+print('importing nm')
+
 if __name__ == '__main__':
     # print(str_days_ago(4))
-    print_functions()
+    # print_functions()
     # print(pd.DataFrame({'COL':[1,2,3]}).print_cols().print_shape())
-    # 
-    # pass
+    # logger.info('dfsfs')
+    # print_log('this')
+    # 1/0
+    pass
