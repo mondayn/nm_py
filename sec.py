@@ -2,7 +2,7 @@ from cryptography.fernet import Fernet
 import os
 
 def get_cipher(): 
-    return Fernet(os.environ['PYAES'])
+    return Fernet(os.environ['some_var'])
 
 def encrypt(s):
     ''' returns binary'''
