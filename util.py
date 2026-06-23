@@ -1,6 +1,5 @@
 """
 miscellaneous functions
-
 """
 #region
 def shortcuts():

@@ -145,4 +145,3 @@ def get_azure_users_groups(user):
 
 if __name__ == '__main__':
     pass
-

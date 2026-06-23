@@ -161,6 +161,5 @@ class Dag:
             self.entity,
             i['execution_date'],i['state']) for i in response.json()['dag_runs']])
 
-
 if __name__ == '__main__':
     pass

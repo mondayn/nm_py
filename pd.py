@@ -1,3 +1,4 @@
+
 #region pandas
 def print_shape(df,msg=None):
     ''' for chaining  '''

@@ -5,6 +5,7 @@ pd.set_option('display.max_rows', 1000)
 pd.set_option('display.max_columns', 30) 
 pd.set_option('max_colwidth', 0)
 
+
 # %load_ext autoreload
 # %autoreload 2
 

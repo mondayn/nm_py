@@ -2,7 +2,6 @@ import datetime
 from dateutil.relativedelta import relativedelta
 from zoneinfo import ZoneInfo
 
-
 def iso():
     ''' return iso datetime string  '''
     return datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d%H%M%S")
@@ -14,7 +13,6 @@ def start_of_quarter():
 
 def str_days_ago(n):
     return (datetime.date.today() - datetime.timedelta(days=n)).strftime("%Y-%m-%d")
-
 
 # https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
 def iso(ts=datetime.datetime.now()):

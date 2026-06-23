@@ -64,7 +64,6 @@ def get_df_jobs(env):
 #         subnetwork='?'
 #     return (subnetwork,numWorkers)
 
-
 def parse_ds(*args):
     ''' parse project dataset table'''
     arg_str = '.'.join(args[:3])

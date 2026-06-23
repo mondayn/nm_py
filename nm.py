@@ -1,9 +1,6 @@
 import pandas as pd
 
 
-
-#endregion
-
 #region logging
 import sys
 import logging
@@ -55,7 +52,7 @@ def exists(v):
 #     if executemany:
 #         cursor.fast_executemany = True
 
-
+#monkey patching
 for fx in [
         collapse_levels,get_dupes,take_first,search_df,filter_str,remove_dup_cols,
         my_clipboard,view_short,change_dtypes,profile,trim_and_rename,

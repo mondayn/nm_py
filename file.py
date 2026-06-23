@@ -31,18 +31,18 @@ def read_file(file):
 #         return arg_wrapper
 #     return fx_wrapper
 
-import os, concurrent.futures, fnmatch, glob
-def get_files(base_path,pattern='*.*',workers=6):
-    '''to recurse, pattern should begin with **/ '''
-    with os.scandir(base_path) as sc: files = fnmatch.filter([f.path for f in sc if f.is_file()],pattern)
-    with os.scandir(base_path) as sc: sub_dirs=[f for f in sc if f.is_dir()]    
+# import os, concurrent.futures, fnmatch, glob
+# def get_files(base_path,pattern='*.*',workers=6):
+#     '''to recurse, pattern should begin with **/ '''
+#     with os.scandir(base_path) as sc: files = fnmatch.filter([f.path for f in sc if f.is_file()],pattern)
+#     with os.scandir(base_path) as sc: sub_dirs=[f for f in sc if f.is_dir()]    
 
-    if len(sub_dirs)>0:
-        def get_sub_files(path): return [os.path.abspath(os.path.join(path,x)) for x in glob.iglob(pattern,root_dir=path,recursive=True)]
-        with concurrent.futures.ThreadPoolExecutor(workers) as executor: results = executor.map(get_sub_files, sub_dirs)
-        files += [x for sublist in results for x in sublist]    
+#     if len(sub_dirs)>0:
+#         def get_sub_files(path): return [os.path.abspath(os.path.join(path,x)) for x in glob.iglob(pattern,root_dir=path,recursive=True)]
+#         with concurrent.futures.ThreadPoolExecutor(workers) as executor: results = executor.map(get_sub_files, sub_dirs)
+#         files += [x for sublist in results for x in sublist]    
 
-    return [f for f in files if '~' not in f]
+#     return [f for f in files if '~' not in f]
 
 #endregion
 
